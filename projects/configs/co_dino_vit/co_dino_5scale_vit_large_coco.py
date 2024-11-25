@@ -227,25 +227,25 @@ model = dict(
             debug=False),],
     test_cfg=[
         dict(
-            max_per_img=1000,
-            nms=dict(type='soft_nms', iou_threshold=0.8)),
+            max_per_img=100,
+            nms=dict(type='soft_nms', iou_threshold=0.4)),
         dict(
             rpn=dict(
-                nms_pre=8000,
-                max_per_img=2000,
-                nms=dict(type='nms', iou_threshold=0.9),
+                nms_pre=200,
+                max_per_img=1000,
+                nms=dict(type='nms', iou_threshold=0.4),
                 min_bbox_size=0),
             rcnn=dict(
-                score_thr=0.0,
+                score_thr=0.1,
                 mask_thr_binary=0.5,
-                nms=dict(type='soft_nms', iou_threshold=0.5),
-                max_per_img=1000)),
+                nms=dict(type='soft_nms', iou_threshold=0.4),
+                max_per_img=500)),
         dict(
-            nms_pre=1000,
-            min_bbox_size=0,
-            score_thr=0.0,
-            nms=dict(type='soft_nms', iou_threshold=0.6),
-            max_per_img=100),
+            nms_pre=100,
+            min_bbox_size=1000,
+            score_thr=0.1,
+            nms=dict(type='soft_nms', iou_threshold=0.4),
+            max_per_img=32),
         # soft-nms is also supported for rcnn testing
         # e.g., nms=dict(type='soft_nms', iou_threshold=0.5, min_score=0.05)
     ])
