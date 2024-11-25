@@ -28,8 +28,32 @@ model = dict(
         transformer=dict(
             encoder=dict(
                 # number of layers that use checkpoint
-                with_cp=6))))
-
+                with_cp=6))),
+    test_cfg=[
+        dict(
+            max_per_img=64,
+            nms=dict(type='soft_nms', iou_threshold=0.4)),
+        dict(
+            rpn=dict(
+                nms_pre=512,
+                max_per_img=128,
+                nms=dict(type='nms', iou_threshold=0.4),
+                min_bbox_size=0),
+            rcnn=dict(
+                score_thr=0.1,
+                mask_thr_binary=0.5,
+                nms=dict(type='soft_nms', iou_threshold=0.4),
+                max_per_img=128)),
+        dict(
+            nms_pre=128,
+            min_bbox_size=1000,
+            score_thr=0.1,
+            nms=dict(type='soft_nms', iou_threshold=0.4),
+            max_per_img=32),
+        # soft-nms is also supported for rcnn testing
+        # e.g., nms=dict(type='soft_nms', iou_threshold=0.5, min_score=0.05)
+    ])
+    
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -92,7 +116,7 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(2048, 1280),
+        img_scale=(1024, 640),
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
