@@ -1,8 +1,19 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from torch.autograd import Function
 from torch.nn import functional as F
+import torch
 
 
+from packaging import version
+def torch_int_div(tensor1, tensor2):
+    """
+    A function that performs integer division across different versions of PyTorch.
+    """
+    if version.parse(torch.__version__) < version.parse("1.8.0"):
+        return tensor1 // tensor2
+    else:
+        return torch.div(tensor1, tensor2, rounding_mode="floor")
+    
 class SigmoidGeometricMean(Function):
     """Forward and backward function of geometric mean of two sigmoid
     functions.

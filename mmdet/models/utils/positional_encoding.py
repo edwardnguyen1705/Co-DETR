@@ -5,8 +5,9 @@ import torch
 import torch.nn as nn
 from mmcv.cnn.bricks.transformer import POSITIONAL_ENCODING
 from mmcv.runner import BaseModule
+from .misc import torch_int_div
 
-
+    
 @POSITIONAL_ENCODING.register_module()
 class SinePositionalEncoding(BaseModule):
     """Position encoding with sine and cosine functions.
@@ -78,7 +79,8 @@ class SinePositionalEncoding(BaseModule):
                       (x_embed[:, :, -1:] + self.eps) * self.scale
         dim_t = torch.arange(
             self.num_feats, dtype=torch.float32, device=mask.device)
-        dim_t = self.temperature**(2 * (dim_t // 2) / self.num_feats)
+        # dim_t = self.temperature**(2 * (dim_t // 2) / self.num_feats)
+        dim_t = self.temperature ** (2 * torch_int_div(dim_t, 2) / self.num_feats)
         pos_x = x_embed[:, :, :, None] / dim_t
         pos_y = y_embed[:, :, :, None] / dim_t
         # use `view` instead of `flatten` for dynamically exporting to ONNX

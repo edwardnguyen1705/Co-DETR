@@ -10,6 +10,7 @@ from mmdet.core import (bbox_cxcywh_to_xyxy, bbox_xyxy_to_cxcywh,
 from mmdet.models.utils.transformer import inverse_sigmoid
 from mmdet.models.builder import HEADS
 from mmdet.models.dense_heads.detr_head import DETRHead
+from mmdet.models.utils.misc import torch_int_div
 
 import sys
 import numpy as np
@@ -1028,7 +1029,8 @@ class CoDeformDETRHead(DETRHead):
             cls_score = cls_score.sigmoid()
             scores, indexes = cls_score.view(-1).topk(max_per_img)
             det_labels = indexes % self.num_classes
-            bbox_index = indexes // self.num_classes
+            # bbox_index = indexes // self.num_classes
+            bbox_index = torch_int_div(indexes, self.num_classes)
             bbox_pred = bbox_pred[bbox_index]
         else:
             scores, det_labels = F.softmax(cls_score, dim=-1)[..., :-1].max(-1)
